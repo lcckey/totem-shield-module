@@ -11,7 +11,7 @@
 #define MIRYOKU_NAV_VI
 
 // Include the Miryoku mapping for Totem (38 keys)
-#include "../miryoku/mapping/38/totem.h"
+#include "../miryoku/miroyoku/mapping/38/totem.h"
 
 // Include the Miryoku keymap
-#include "../miryoku/miryoku.dtsi"
+#include "../miryoku/miroyoku/miryoku.dtsi"
