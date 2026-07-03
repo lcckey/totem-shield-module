@@ -7,7 +7,7 @@
 //   MIRYOKU_ALPHAS = COLEMAKDH   (Base layer:  Colemak Mod-DH)
 //   MIRYOKU_TAP    = COLEMAKDH   (Tap layer:   Colemak Mod-DH, no hold-taps)
 //   MIRYOKU_EXTRA  = QWERTY      (Extra layer: QWERTY)
-//   MIRYOKU_NAV    = VI          (Nav layer:   cursor keys under h j k l)
+//   MIRYOKU_NAV    = default     (Nav layer:   standard Miryoku cursor placement)
 //   Clipboard bindings left at Miryoku's default (X11-style: LS(INS)/LC(INS)/LS(DEL)).
 //
 // Layers: Base, Extra, Tap, Button, Nav, Mouse, Media, Num, Sym, Fun.
@@ -265,14 +265,14 @@
         };
 
 /* ---------------------------------------------------------------------------------------------------------------------------------------------------
-   NAV - vi-style: cursor keys sit under the home-row h j k l (index/middle/ring/pinky = left/down/up/right).
+   NAV - default: standard Miryoku cursor placement (one column in from the pinky).
 ---------------------------------------------------------------------------------------------------------------------------------------------------- */
         nav_layer {
             label = "Nav";
             bindings = <
                 &bootloader &u_to_tap   &u_to_extra &u_to_base  &none              &kp K_AGAIN &kp LS(INS) &kp LC(INS) &kp LS(DEL) &kp K_UNDO
-                &kp LGUI    &kp LALT    &kp LCTRL   &kp LSHFT   &none              &kp LEFT    &kp DOWN    &kp UP      &kp RIGHT   &u_caps_word
-    &bootloader &none       &kp RALT    &u_to_num   &u_to_nav   &none              &kp HOME    &kp PG_DN   &kp PG_UP   &kp END     &kp INS     &kp K_UNDO
+                &kp LGUI    &kp LALT    &kp LCTRL   &kp LSHFT   &none              &u_caps_word &kp LEFT   &kp DOWN    &kp UP      &kp RIGHT
+    &bootloader &none       &kp RALT    &u_to_num   &u_to_nav   &none              &kp INS     &kp HOME    &kp PG_DN   &kp PG_UP   &kp END     &kp K_UNDO
                                     &none       &none       &none              &kp RET     &kp BSPC    &kp DEL
             >;
         };
@@ -281,8 +281,8 @@
             label = "Mouse";
             bindings = <
                 &bootloader &u_to_tap   &u_to_extra &u_to_base  &none              &kp K_AGAIN &kp LS(INS) &kp LC(INS) &kp LS(DEL) &kp K_UNDO
-                &kp LGUI    &kp LALT    &kp LCTRL   &kp LSHFT   &none              &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT &none
-    &bootloader &none       &kp RALT    &u_to_sym   &u_to_mouse &none              &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &none &kp K_UNDO
+                &kp LGUI    &kp LALT    &kp LCTRL   &kp LSHFT   &none              &none       &mmv MOVE_LEFT &mmv MOVE_DOWN &mmv MOVE_UP &mmv MOVE_RIGHT
+    &bootloader &none       &kp RALT    &u_to_sym   &u_to_mouse &none              &none       &msc SCRL_LEFT &msc SCRL_DOWN &msc SCRL_UP &msc SCRL_RIGHT &kp K_UNDO
                                     &none       &none       &none              &mkp MB2    &mkp MB1    &mkp MB3
             >;
         };
@@ -290,9 +290,9 @@
         media_layer {
             label = "Media";
             bindings = <
-                &bootloader &u_to_tap   &u_to_extra &u_to_base  &none              &rgb_ug RGB_EFF &rgb_ug RGB_HUI &rgb_ug RGB_SAI &rgb_ug RGB_BRI &rgb_ug RGB_TOG
-                &kp LGUI    &kp LALT    &kp LCTRL   &kp LSHFT   &none              &kp C_PREV  &kp C_VOL_DN &kp C_VOL_UP &kp C_NEXT &ext_power EP_TOG
-    &bootloader &none       &kp RALT    &u_to_fun   &u_to_media &none              &u_bt_sel_0 &u_bt_sel_1 &u_bt_sel_2 &u_bt_sel_3 &u_out_tog  &rgb_ug RGB_TOG
+                &bootloader &u_to_tap   &u_to_extra &u_to_base  &none              &rgb_ug RGB_TOG &rgb_ug RGB_EFF &rgb_ug RGB_HUI &rgb_ug RGB_SAI &rgb_ug RGB_BRI
+                &kp LGUI    &kp LALT    &kp LCTRL   &kp LSHFT   &none              &ext_power EP_TOG &kp C_PREV &kp C_VOL_DN &kp C_VOL_UP &kp C_NEXT
+    &bootloader &none       &kp RALT    &u_to_fun   &u_to_media &none              &u_out_tog  &u_bt_sel_0 &u_bt_sel_1 &u_bt_sel_2 &u_bt_sel_3 &rgb_ug RGB_BRI
                                     &none       &none       &none              &kp C_STOP  &kp C_PP    &kp C_MUTE
             >;
         };
