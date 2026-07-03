@@ -1,247 +1,192 @@
+/*
+ * Copyright (c) 2022 Manna Harbour
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ *
+ * Miroyoku layout for Totem Keyboard (Flattened)
+ * Base: Colemak Mod-DH | Tap: Colemak Mod-DH | Extra: QWERTY | Nav: Vi-style
+ * https://github.com/manna-harbour/miryoku_zmk
+ */
+
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/keys.h>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/outputs.h>
 
-#define BASE 0
-#define NAV  1
-#define NSL  2
-#define ADJ  3
+/* ============================================================================================================
+ * LAYER INDICES
+ * ============================================================================================================ */
 
-&mt {
-  /* tapping-term-ms = <170>; */
-    quick-tap-ms = <250>;
-    /* flavor = "hold-preferred"; */
-  /* global-quick-tap; */
-};
+#define U_BASE   0
+#define U_EXTRA  1
+#define U_TAP    2
+#define U_BUTTON 3
+#define U_NAV    4
+#define U_MOUSE  5
+#define U_SYM    6
+#define U_NUM    7
+#define U_FUN    8
+#define U_MEDIA  9
 
-&lt {
-    /* tapping-term-ms = <170>; */
-    quick-tap-ms = <250>;
-    /* flavor = "tap-preferred"; */
-    /* global-quick-tap; */
-    require-prior-idle-ms = <250>;
-};
-
-&sk {
-    quick-release;
-};
+/* ============================================================================================================
+ * KEYMAP DEFINITION
+ * ============================================================================================================ */
 
 / {
-    behaviors {
-       /*
-        *
-        */
-        caps_tdr: caps_tap_dance_right {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            /* bindings = <&smt RSHFT RALT>, <&caps_word>; */
-            bindings = <&sk RALT>, <&caps_word>;
-        };
-
-        caps_tdl: caps_tap_dance_left {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <&slt 1 LSHFT>, <&caps_word>;
-        };
-
-
-       /*   Custom mod-tap/layer-tap behavior.
-        *   The main idea is to accomodate
-        *   the one-shot (i.e. sticky) mods.
-        */
-        slt: sticky_layer_tap {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            /* require-prior-idle-ms = <250>; */
-            bindings = <&mo>, <&sk>;
-            display-name = "Sticky-Layer-Tap";
-        };
-
-        smt: sticky_mod_tap {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            bindings = <&kp>, <&sk>;
-            display-name = "Sticky-Mod-Tap";
-        };
-
-       /*   Tapping the key invokes the Caps-Word
-        *   behavior while holding it is used
-        *   as a regular key press.
-        *
-        *   One thing to note here is that the second parameter
-        *   is passed a dummy argument value (e.g. 0), per the 
-        *   official documentation.
-        */
-        ht_caps: hold_tap_caps {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            tapping-term-ms = <200>;
-            bindings = <&kp>, <&caps_word>;
-            display-name = "Caps Hold Tap";
-        };
-
-       /*   CTRL -based behavior of what would normally be a plain SPACE.
-        *   Implemented as nested mod-morphs. The main idea is that `space`
-        *   and `comma` are among the most commonly typed characters; hence
-        *   their optimized placement (again, not without some individual
-        *   preferences).
-        */
-        spc_L1: rctl_space {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&lt 2 SPACE>, <&kp COMMA>;
-            mods = <(MOD_RCTL)>;
-        };
-
-        spc_L0: lctl_space {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            /* bindings = <&spc_L1>, <&kp COLON>; */
-            bindings = <&lt 2 SPACE>, <&kp COLON>;
-            mods = <(MOD_LCTL)>;
-        };
-
-       /*   Quasi-Shift behavior for certain keys.
-        *   In the traditional QWERTY layout/keyboard proper,
-        *   pairs of non-alphanumeric symbols seem to be tightly coupled
-        *   with one another via Shift Mod Key (e.g. / and ? ).
-        *   In ZMK, there could actually be an easier way to decouple them,
-        *   and, as such, this schema is also subject to revision.
-        */
-        s_minus: shift_minus {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&kp MINUS>, <&kp PLUS>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
-
-        s_dot: shift_dot {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&kp DOT>, <&kp GT>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
-
-        s_slash: shift_slash {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&kp FSLH>, <&kp LT>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
-
-        s_quote: shift_quotes {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&kp APOS>, <&kp GRAVE>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
-        };
-
-        ecc: esc_comma_ctl {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&mt LCTRL ESC>, <&kp COMMA>;
-            mods = <MOD_RCTL>;
-        };
-
-       /*
-        *
-        *
-        */
-        mm_ctrl_bspc: ctrl_bspc {
-            compatible = "zmk,behavior-mod-morph";
-            #binding-cells = <0>;
-            bindings = <&mt RCTRL BSPC>, <&kp BSPC>;
-            mods = <MOD_LCTL>;
-            keep-mods = <MOD_LCTL>;
-        };
-
+  behaviors {
+    // Layer-tap behavior for tap-hold layer switching
+    lt: layer_tap {
+      compatible = "zmk,behavior-hold-tap";
+      label = "LAYER_TAP";
+      #binding-cells = <2>;
+      tapping-term-ms = <200>;
+      quick-tap-ms = <175>;
+      flavor = "balanced";
+      bindings = <&mo>, <&kp>;
     };
 
-    macros {
-       /*   Easier navigation macros.  */
-        four_down: four_down_macro {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&macro_tap &kp DOWN &kp DOWN &kp DOWN &kp DOWN>;
-        };
+    // Home row mods for modifier keys
+    hm: homerow_mods {
+      compatible = "zmk,behavior-hold-tap";
+      label = "HOMEROW_MODS";
+      #binding-cells = <2>;
+      tapping-term-ms = <280>;
+      quick-tap-ms = <175>;
+      flavor = "balanced";
+      bindings = <&kp>, <&kp>;
+    };
+  };
 
-        four_up: four_up_macro {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&macro_tap &kp UP &kp UP &kp UP &kp UP>;
-        };
+  keymap {
+    compatible = "zmk,keymap";
 
-        eight_down: eight_down_macro {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&macro_tap &kp N8 &kp DOWN>;
-        };
-
-        eight_up: eight_up_macro {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = <&macro_tap &kp N8 &kp UP>;
-        };
+    /* ================================================================================
+     * LAYER 0: BASE - Colemak Mod-DH
+     * ================================================================================ */
+    base_layer {
+      label = "Base";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &lt U_EXTRA N   &lt U_TAP E     &lt U_EXTRA I   &lt U_TAP A     &lt U_BUTTON O                           &lt U_BUTTON S  &lt U_TAP T     &lt U_EXTRA H   &lt U_TAP R     &lt U_EXTRA D
+        &lt U_BUTTON Z  &lt U_NAV X     &lt U_MOUSE C   &lt U_SYM V     &lt U_EXTRA G                            &lt U_EXTRA M   &lt U_SYM K     &lt U_MOUSE L   &lt U_NAV J     &lt U_BUTTON W
+                                        &kp U           &kp E           &lt U_MEDIA SPC                          &lt U_NUM RET   &kp I           &kp O
+      >;
     };
 
-/* ---------------------------------------------------------------------------------------------------------------------------------------------------- 
-              ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓   ┏━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┳━━━━━━━━━━━┓
-              ┃     b     ┃     l     ┃     d     ┃     w     ┃    z      ┃   ┃     "     ┃     f     ┃     o     ┃     u     ┃     j     ┃
-              ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫
-              ┃     n     ┃     r     ┃     t     ┃     s     ┃    g      ┃   ┃     y     ┃     h     ┃     a     ┃     e     ┃     i     ┃
-  ┏━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┓
-  ┃           ┃     q     ┃     x     ┃     m     ┃     c     ┃    v      ┃   ┃     k     ┃     p     ┃   - (+)   ┃   . (>)   ┃  / (<)    ┃           ┃
-  ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┫   ┣━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━╋━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
-                                      ┃           ┃           ┃           ┃   ┃           ┃           ┃           ┃
-                                      ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛   ┗━━━━━━━━━━━┻━━━━━━━━━━━┻━━━━━━━━━━━┛
-*/
-    keymap {
-        compatible = "zmk,keymap";
-        base_layer {
-            label= "BASE";
-            bindings = <
-                  &kp B     &kp L       &kp D         &kp W         &kp Z       &s_quote       &kp F           &kp O      &kp U   &kp J
-                  &kp N     &kp R       &kp T         &kp S         &kp G       &kp Y          &kp H           &kp A      &kp E   &kp I
-    &ecc          &kp Q     &kp X       &kp M         &kp C         &kp V       &kp K          &kp P           &s_minus   &s_dot  &kp EQUAL &lt 3 RET
-                                        &mt LMETA TAB &slt 1 LSHFT  &spc_L0     &mm_ctrl_bspc  &sk LALT        &ht_caps LSHFT 0
-            >;
-        };
-/* ---------------------------------------------------------------------------------------------------------------------------------------------------- */
-        nav_layer {
-            label= "NAV";
-            bindings = <
-                &trans     &kp LG(N7)  &kp LG(N8)   &kp LG(N9)  &trans          &kp DQT    &kp RA(F)    &eight_down &eight_up   &kp RA(B)
-                &trans     &kp LG(N4)  &kp LG(N5)   &kp LG(N6)  &trans          &kp ESC    &kp LEFT     &kp DOWN    &kp UP      &kp RIGHT
-    &kp EXCL    &kp LG(N0) &kp LG(N1)  &kp LG(N2)   &kp LG(N3)  &trans          &kp COLON  &kp GT       &four_down   &four_up    &kp LT     &kp FSLH
-                                       &trans       &trans      &trans          &kp QMARK  &kp EXCL     &trans
-            >;
-        };
-/* ---------------------------------------------------------------------------------------------------------------------------------------------------- */
-        num_sym_layer {
-            label= "NSL";
-            bindings = <
-                &kp HASH    &kp LBKT    &kp RBKT     &kp PIPE    &kp BSLH        &kp PRCNT   &kp N7      &kp N8      &kp N9     &kp DOT
-                &kp AT      &kp LPAR    &kp RPAR     &kp AMPS    &kp ASTRK       &kp UNDER   &kp N4      &kp N5      &kp N6     &kp FSLH
-    &kp MINUS   &kp CARET   &kp LBRC    &kp RBRC     &kp DOLLAR  &kp TILDE       &kp SEMI    &kp N1      &kp N2      &kp N3     &kp N0      &kp PLUS
-                                        &trans       &trans      &trans          &kp RET     &kp SPACE    &kp COMMA
-            >;
-        };
-/* ---------------------------------------------------------------------------------------------------------------------------------------------------- */
-        adjust_layer {
-            label= "ADJ";
-            bindings = <
-                &trans       &kp F7     &kp F8       &kp F9      &kp F10         &bt BT_CLR   &trans      &trans       &trans      &trans
-                &trans       &kp F4     &kp F5       &kp F6      &kp F11         &trans       &trans      &sys_reset   &trans      &trans
-    &trans      &trans       &kp F1     &kp F2       &kp F3      &kp F12         &trans       &trans      &trans       &trans      &trans    &trans
-                                        &trans       &trans      &kp LS(SPACE)   &bt BT_NXT   &bt BT_PRV  &out OUT_TOG
-            >;
-        };
+    /* ================================================================================
+     * LAYER 1: EXTRA - QWERTY Layout
+     * ================================================================================ */
+    extra_layer {
+      label = "Extra";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp Q           &kp W           &kp E           &kp R           &kp T                                    &kp Y           &kp U           &kp I           &kp O           &kp P
+        &kp A           &kp S           &kp D           &kp F           &kp G                                    &kp H           &kp J           &kp K           &kp L           &kp SEMI
+                                        &kp Z           &kp X           &kp C                                    &kp V           &kp B           &kp N
+      >;
     };
+
+    /* ================================================================================
+     * LAYER 2: TAP - Colemak Mod-DH with Modifiers
+     * ================================================================================ */
+    tap_layer {
+      label = "Tap";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp LCTL        &kp LALT        &kp LGUI        &kp LSFT        &none                                    &none           &kp LSFT        &kp LGUI        &kp LALT        &kp LCTL
+        &none           &kp RALT        &none           &none           &none                                    &none           &none           &none           &kp RALT        &none
+                                        &none           &none           &none                                    &none           &none           &none
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 3: BUTTON - Mouse Buttons & Clicks
+     * ================================================================================ */
+    button_layer {
+      label = "Button";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+                                        &none           &none           &none                                    &none           &none           &none
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 4: NAV - Vi-style Navigation (hjkl)
+     * ================================================================================ */
+    nav_layer {
+      label = "Nav";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp LCTL        &kp LALT        &kp LGUI        &kp LSFT        &none                                    &kp CAPS        &kp LEFT        &kp DOWN        &kp UP          &kp RIGHT
+        &none           &kp RALT        &none           &none           &none                                    &kp INS         &kp HOME        &kp PGDN        &kp PGUP        &kp END
+                                        &none           &none           &none                                    &kp DEL         &kp BSPC        &none
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 5: MOUSE - Mouse Movement & Buttons
+     * ================================================================================ */
+    mouse_layer {
+      label = "Mouse";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp LCTL        &kp LALT        &kp LGUI        &kp LSFT        &none                                    &none           &none           &none           &none           &none
+        &none           &kp RALT        &none           &none           &none                                    &none           &none           &none           &none           &none
+                                        &none           &none           &none                                    &none           &none           &none
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 6: SYM - Symbol Layer
+     * ================================================================================ */
+    sym_layer {
+      label = "Sym";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp LBRC        &kp AMPR        &kp ASTR        &kp LPRN        &kp RBRC                                 &kp SCLN        &kp COLN        &kp DQUO        &kp LBKT        &kp BSLS
+        &kp HASH        &kp DLLR        &kp PERC        &kp CARET       &kp PLUS                                 &kp EQL         &kp EXCL        &kp AT          &kp LBRK        &kp PIPE
+                                        &kp TILD        &kp GRAVE       &kp QMARK                                &kp UNDS        &kp MINUS       &kp SLSH
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 7: NUM - Number & Operator Layer
+     * ================================================================================ */
+    num_layer {
+      label = "Num";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp LBKT        &kp N7          &kp N5          &kp N3          &kp RBKT                                 &kp SCLN        &kp N1          &kp N8          &kp N9          &kp N0
+        &kp SCLN        &kp N4          &kp N6          &kp N2          &kp EQL                                  &kp EQL         &kp LPRN        &kp RPRN        &kp COMMA       &kp DOT
+                                        &kp PLUS        &kp MINUS       &kp ASTR                                 &kp SLSH        &kp DOT         &kp COMMA
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 8: FUN - Function Keys Layer
+     * ================================================================================ */
+    fun_layer {
+      label = "Fun";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp F12         &kp F7          &kp F5          &kp F3          &kp F11                                  &kp F10         &kp F9          &kp F2          &kp F4          &kp F6
+        &kp F1          &kp F4          &kp F6          &kp F2          &kp F8                                   &kp F1          &kp F2          &kp F3          &kp F4          &kp F5
+                                        &kp F9          &kp F10         &kp F11                                  &kp F12         &kp F13         &kp F14
+      >;
+    };
+
+    /* ================================================================================
+     * LAYER 9: MEDIA - Media Controls
+     * ================================================================================ */
+    media_layer {
+      label = "Media";
+      bindings = <
+        &none           &none           &none           &none           &none                                    &none           &none           &none           &none           &none
+        &kp LCTL        &kp LALT        &kp LGUI        &kp LSFT        &none                                    &none           &kp VOLD        &kp VOLU        &kp MUTE        &none
+        &none           &kp RALT        &none           &none           &none                                    &none           &kp MPRV        &kp MNXT        &kp MPLY        &kp MSTP
+                                        &none           &none           &none                                    &none           &none           &none
+      >;
+    };
+  };
 };
